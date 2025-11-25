@@ -28,7 +28,7 @@ public class AuthController {
 	}
 	
 	@PostMapping("/registrar")
-	public ResponseEntity<LoginResponseDTO> registar(@RequestBody LoginRequestDTO data) {
+	public ResponseEntity<LoginResponseDTO> register(@RequestBody LoginRequestDTO data) {
 		LoginResponseDTO response = service.registrar(data);
 		if(response.email().equals(null)) {
 			return ResponseEntity.badRequest().build();

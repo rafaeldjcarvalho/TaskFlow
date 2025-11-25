@@ -25,7 +25,6 @@ public class TokenService {
 			
 			String token = JWT.create().withIssuer("taskflow-auth-api")
 					.withSubject(user.getEmail())
-					.withClaim("id", user.getId())
 					.withExpiresAt(this.generateExpirationDate())
 					.sign(algorithm);
 			return token;

@@ -14,6 +14,7 @@ import com.rafael.TaskFlow.entity.dtos.ColunaDTO;
 import com.rafael.TaskFlow.entity.dtos.ProjetoRequest;
 import com.rafael.TaskFlow.entity.dtos.ProjetoResponse;
 import com.rafael.TaskFlow.entity.dtos.TarefaDTO;
+import com.rafael.TaskFlow.entity.dtos.mapper.ProjetoMapper;
 import com.rafael.TaskFlow.entity.dtos.mapper.TarefaMapper;
 import com.rafael.TaskFlow.repository.ColunaRepository;
 import com.rafael.TaskFlow.repository.ProjetoRepository;
@@ -36,10 +37,15 @@ public class ProjetoService {
 	private TarefaRepository tarefaRepository;
 	
 	@Autowired
+	private ProjetoMapper projetoMapper;
+	@Autowired
 	private TarefaMapper tarefaMapper;
 	
-	public List<Projeto> getAllProjects(Long usuario_id) {
-		return projetoRepository.findProjetosByUsuario(usuario_id);
+	public List<ProjetoResponse> getAllProjects(Long usuario_id) {
+		return projetoRepository.findProjetosByUsuario(usuario_id)
+				.stream()
+				.map(projetoMapper::toDTO)
+				.collect(Collectors.toList());
 	}
 	
 	public ProjetoResponse getProjectById(Long projeto_id, Long usuario_id) {
@@ -61,7 +67,7 @@ public class ProjetoService {
 		return new ProjetoResponse(projeto.getId(), projeto.getNome(), usuario.getId(), colunasDTO);
 	}
 	
-	public Projeto createNewProject(ProjetoRequest data) {
+	public ProjetoResponse createNewProject(ProjetoRequest data) {
 		Usuario usuario = usuarioRepository.findById(data.usuario_id()).orElseThrow(() -> new RuntimeException("User not found"));
 		
 		Projeto novoProjeto = new Projeto();
@@ -74,7 +80,7 @@ public class ProjetoService {
 		this.createColumn("Em Andamento", 1, projetoSalvo);
 		this.createColumn("Concluido", 2, projetoSalvo);
 		
-		return projetoSalvo;
+		return projetoMapper.toDTO(projetoSalvo);
 	}
 	
 	private Projeto saveProject(Projeto data) {

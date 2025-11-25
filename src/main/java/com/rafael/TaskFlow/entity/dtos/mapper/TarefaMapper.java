@@ -5,10 +5,7 @@ import org.springframework.stereotype.Component;
 import com.rafael.TaskFlow.entity.Tarefa;
 import com.rafael.TaskFlow.entity.dtos.TarefaDTO;
 
-import lombok.AllArgsConstructor;
-
 @Component
-@AllArgsConstructor
 public class TarefaMapper {
 	
 	public TarefaDTO toDTO(Tarefa data) {
