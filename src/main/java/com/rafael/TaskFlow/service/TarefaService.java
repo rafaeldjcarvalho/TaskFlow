@@ -19,8 +19,9 @@ public class TarefaService {
 	@Autowired
 	private ColunaRepository colunaRepository;
 	
-	public TarefaDTO createTask(TarefaDTO data, Long column_id) {
+	public TarefaDTO createTask(TarefaDTO data, Long column_id, Long user_id) {
 		Coluna aFazer = colunaRepository.findById(column_id).orElseThrow(() -> new RuntimeException("Column not found"));
+		if(!verifyOwnershipOfTheTask(aFazer, user_id)) throw new RuntimeException("The Task doesn't belong to the user");
 		Tarefa novaTarefa = new Tarefa();
 		novaTarefa.setTitulo(data.titulo());
 		novaTarefa.setDescricao(data.descricao());
@@ -32,8 +33,9 @@ public class TarefaService {
 		return new TarefaDTO(tarefaSalva.getId(), tarefaSalva.getTitulo(), tarefaSalva.getDescricao(), tarefaSalva.getPrioridade(), tarefaSalva.getOrdem());
 	}
 	
-	public TarefaDTO updateTask(Long task_id, TarefaDTO new_data) {
+	public TarefaDTO updateTask(Long task_id, TarefaDTO new_data, Long user_id) {
 		Tarefa tarefa = tarefaRepository.findById(task_id).orElseThrow(() -> new RuntimeException("Task not found"));
+		if(!verifyOwnershipOfTheTask(tarefa.getColuna(), user_id)) throw new RuntimeException("The Task doesn't belong to the user");
 		tarefa.setTitulo(new_data.titulo());
 		tarefa.setDescricao(new_data.descricao());
 		tarefa.setPrioridade(new_data.prioridade());
@@ -43,14 +45,17 @@ public class TarefaService {
 		
 	}
 	
-	public void deleteTask(Long task_id) {
+	public void deleteTask(Long task_id, Long user_id) {
 		Tarefa tarefa = tarefaRepository.findById(task_id).orElseThrow(() -> new RuntimeException("Task not found"));
+		if(!verifyOwnershipOfTheTask(tarefa.getColuna(), user_id)) throw new RuntimeException("The Task doesn't belong to the user");
 		tarefaRepository.delete(tarefa);
 	}
 	
-	public TarefaDTO moveTask(Long task_id, MoverTarefaDTO data) {
+	public TarefaDTO moveTask(Long task_id, MoverTarefaDTO data, Long user_id) {
 		Tarefa tarefa = tarefaRepository.findById(task_id).orElseThrow(() -> new RuntimeException("Task not found"));
 		Coluna novaColuna = colunaRepository.findById(data.idNovaColuna()).orElseThrow(() -> new RuntimeException("Column not found"));
+		if(!verifyOwnershipOfTheTask(tarefa.getColuna(), user_id)) throw new RuntimeException("The Task doesn't belong to the user");
+		if(!verifyOwnershipOfTheTask(novaColuna, user_id)) throw new RuntimeException("The Task doesn't belong to the user");
 		
 		tarefa.setOrdem(data.idNovaOrdem());
 		tarefa.setColuna(novaColuna);
@@ -61,6 +66,13 @@ public class TarefaService {
 	
 	private Tarefa saveTask(Tarefa data) {
 		return tarefaRepository.save(data);
+	}
+	
+	private boolean verifyOwnershipOfTheTask(Coluna data, Long user_id) {
+		if(data.getProjeto().getUsuario().getId() == user_id) {
+			return true;
+		}
+		return false;
 	}
 
 }

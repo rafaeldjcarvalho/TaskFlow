@@ -52,6 +52,8 @@ public class ProjetoService {
 		Projeto projeto = projetoRepository.findById(projeto_id).orElseThrow(() -> new RuntimeException("Project not found"));
 		Usuario usuario = usuarioRepository.findById(usuario_id).orElseThrow(() -> new RuntimeException("User not found"));
 		
+		if(projeto.getUsuario().getId() != usuario.getId()) throw new RuntimeException("The task doesn't belong to the user");
+		
 		List<ColunaDTO> colunasDTO = new ArrayList<ColunaDTO>();
 		List<Coluna> colunasDoProjeto = colunaRepository.findColunasByProjeto(projeto_id);
 		
