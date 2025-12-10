@@ -39,10 +39,10 @@ public class ColunaRepositoryTest {
 		return user;
 	}
 	
-	private Projeto createProject(ProjetoRequest data) {
+	private Projeto createProject(ProjetoRequest data, Long usuario_id) {
 		Projeto project = new Projeto();
 		project.setNome(data.nome());
-		project.setUsuario(usuarioRepository.findById(data.usuario_id()).get());
+		project.setUsuario(usuarioRepository.findById(usuario_id).get());
 		this.entityManager.persist(project);
 		return project;
 	}
@@ -60,7 +60,7 @@ public class ColunaRepositoryTest {
 	@DisplayName("Deve receber uma lista de colunas com sucesso do BD")
 	public void findColunasByProjetoCase1() {
 		Usuario usuario = this.createUser(new Usuario(null, "usuario@gmail.com", "123123123"));
-		Projeto projeto = this.createProject(new ProjetoRequest("Projeto1", usuario.getId()));
+		Projeto projeto = this.createProject(new ProjetoRequest("Projeto1"), usuario.getId());
 		
 		Coluna coluna1 = this.createColumn("A fazer", 1, projeto.getId());
 		Coluna coluna2 = this.createColumn("Fazendo", 2, projeto.getId());

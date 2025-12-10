@@ -35,10 +35,10 @@ public class ProjetoRepositoryTest {
 		return user;
 	}
 	
-	private Projeto createProject(ProjetoRequest data) {
+	private Projeto createProject(ProjetoRequest data, Long usuario_id) {
 		Projeto project = new Projeto();
 		project.setNome(data.nome());
-		project.setUsuario(usuarioRepository.findById(data.usuario_id()).get());
+		project.setUsuario(usuarioRepository.findById(usuario_id).get());
 		this.entityManager.persist(project);
 		return project;
 	}
@@ -47,8 +47,8 @@ public class ProjetoRepositoryTest {
 	@DisplayName("Deve receber uma lista de projetos com sucesso do BD")
 	public void findProjetosByUsuarioCase1() {
 		Usuario usuario = this.createUser(new Usuario(null, "usuario@gmail.com", "12345678"));
-		Projeto projeto1 = this.createProject(new ProjetoRequest("Projeto1", usuario.getId()));
-		Projeto projeto2 = this.createProject(new ProjetoRequest("Projeto2", usuario.getId()));
+		Projeto projeto1 = this.createProject(new ProjetoRequest("Projeto1"), usuario.getId());
+		Projeto projeto2 = this.createProject(new ProjetoRequest("Projeto2"), usuario.getId());
 		
 		List<Projeto> result = this.projetoRepository.findProjetosByUsuario(usuario.getId());
 		

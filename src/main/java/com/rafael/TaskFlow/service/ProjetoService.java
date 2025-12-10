@@ -69,8 +69,8 @@ public class ProjetoService {
 		return new ProjetoResponse(projeto.getId(), projeto.getNome(), usuario.getId(), colunasDTO);
 	}
 	
-	public ProjetoResponse createNewProject(ProjetoRequest data) {
-		Usuario usuario = usuarioRepository.findById(data.usuario_id()).orElseThrow(() -> new RuntimeException("User not found"));
+	public ProjetoResponse createNewProject(ProjetoRequest data, Long usuario_id) {
+		Usuario usuario = usuarioRepository.findById(usuario_id).orElseThrow(() -> new RuntimeException("User not found"));
 		
 		Projeto novoProjeto = new Projeto();
 		novoProjeto.setNome(data.nome());

@@ -37,8 +37,8 @@ public class ProjetoController {
 	}
 	
 	@PostMapping
-	public ResponseEntity<ProjetoResponse> createProject(@RequestBody ProjetoRequest data) {
-		ProjetoResponse projeto = service.createNewProject(data);
+	public ResponseEntity<ProjetoResponse> createProject(@RequestBody ProjetoRequest data, @AuthenticationPrincipal Usuario usuarioLogado) {
+		ProjetoResponse projeto = service.createNewProject(data, usuarioLogado.getId());
 		return ResponseEntity.ok(projeto);
 	}
 

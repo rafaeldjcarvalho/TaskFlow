@@ -8,6 +8,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -52,6 +53,7 @@ public class TarefaServiceTest {
 		Coluna coluna = new Coluna(1l, "titulo", 0, new Projeto(1l, "projeto", new Usuario(1l, "email@gmail.com", "123123123")));
 		
 		when(colunaRepository.findById(coluna.getId())).thenReturn(Optional.of(coluna));
+		when(tarefaRepository.findTarefasByColuna(coluna.getId())).thenReturn(new ArrayList<Tarefa>());
 		when(tarefaRepository.save(any(Tarefa.class))).thenReturn(new Tarefa(data.id(), data.titulo(), data.descricao(), data.prioridade(), data.ordem(), coluna));
 		
 		TarefaDTO result = this.tarefaService.createTask(data, 1l, 1l);
@@ -200,6 +202,7 @@ public class TarefaServiceTest {
 		
 		when(tarefaRepository.findById(1l)).thenReturn(Optional.of(tarefa));
 		when(colunaRepository.findById(2l)).thenReturn(Optional.of(coluna2));
+		when(tarefaRepository.findByOrdem(mover.idNovaOrdem())).thenReturn(Optional.empty());
 		when(tarefaRepository.save(any(Tarefa.class))).thenReturn(new Tarefa(1l, "titulo", "desc", Prioridade.ALTA, 1, coluna2));
 		
 		this.tarefaService.moveTask(1l, mover, 1l);

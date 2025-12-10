@@ -43,6 +43,7 @@ public class Tarefa {
 	@Enumerated(EnumType.STRING)
 	private Prioridade prioridade;
 	
+	@Column(nullable = false)
 	private int ordem;
 	
 	@ManyToOne

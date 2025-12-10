@@ -132,7 +132,7 @@ public class ProjetoServiceTest {
 	@Test
 	@DisplayName("Deve criar um projeto com sucesso")
 	public void createNewProjectCase1() {
-		ProjetoRequest data = new ProjetoRequest("titulo", 1l);
+		ProjetoRequest data = new ProjetoRequest("titulo");
 		Usuario usuario = new Usuario(1l, "email@gmail.com", "321321312");
 		Projeto projeto = new Projeto(1l, "titulo", usuario);
 		
@@ -141,7 +141,7 @@ public class ProjetoServiceTest {
 		when(colunaRepository.save(any(Coluna.class))).thenReturn(new Coluna());
 		when(projetoMapper.toDTO(any(Projeto.class))).thenReturn(new ProjetoResponse(projeto.getId(), projeto.getNome(), usuario.getId(), null));
 		
-		ProjetoResponse result = this.projetoService.createNewProject(data);
+		ProjetoResponse result = this.projetoService.createNewProject(data, usuario.getId());
 		
 		verify(usuarioRepository, times(1)).findById(1l);
 		verify(projetoRepository, times(1)).save(any(Projeto.class));

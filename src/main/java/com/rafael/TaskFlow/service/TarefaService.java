@@ -1,5 +1,7 @@
 package com.rafael.TaskFlow.service;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,12 +23,13 @@ public class TarefaService {
 	
 	public TarefaDTO createTask(TarefaDTO data, Long column_id, Long user_id) {
 		Coluna aFazer = colunaRepository.findById(column_id).orElseThrow(() -> new RuntimeException("Column not found"));
+		int ordem = tarefaRepository.findTarefasByColuna(column_id).size();
 		if(!verifyOwnershipOfTheTask(aFazer, user_id)) throw new RuntimeException("The Task doesn't belong to the user");
 		Tarefa novaTarefa = new Tarefa();
 		novaTarefa.setTitulo(data.titulo());
 		novaTarefa.setDescricao(data.descricao());
 		novaTarefa.setPrioridade(data.prioridade());
-		novaTarefa.setOrdem(data.ordem());
+		novaTarefa.setOrdem(ordem);
 		novaTarefa.setColuna(aFazer);
 		
 		Tarefa tarefaSalva = this.saveTask(novaTarefa);
@@ -56,6 +59,12 @@ public class TarefaService {
 		Coluna novaColuna = colunaRepository.findById(data.idNovaColuna()).orElseThrow(() -> new RuntimeException("Column not found"));
 		if(!verifyOwnershipOfTheTask(tarefa.getColuna(), user_id)) throw new RuntimeException("The Task doesn't belong to the user");
 		if(!verifyOwnershipOfTheTask(novaColuna, user_id)) throw new RuntimeException("The Task doesn't belong to the user");
+		
+		Optional<Tarefa> tarefaNaPosicao = tarefaRepository.findByOrdem(data.idNovaOrdem());
+		if(tarefaNaPosicao.isPresent()) {
+			tarefaNaPosicao.get().setOrdem(tarefa.getOrdem());
+			this.saveTask(tarefaNaPosicao.get());
+		}
 		
 		tarefa.setOrdem(data.idNovaOrdem());
 		tarefa.setColuna(novaColuna);
