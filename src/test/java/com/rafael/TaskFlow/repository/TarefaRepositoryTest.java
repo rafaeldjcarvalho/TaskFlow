@@ -108,7 +108,7 @@ public class TarefaRepositoryTest {
 		
 		this.createTask("Estudar", null, Prioridade.ALTA, 1, coluna.getId());
 		
-		Optional<Tarefa> result = tarefaRepository.findByOrdem(1);
+		Optional<Tarefa> result = tarefaRepository.findByOrdem(1, coluna.getId());
 		
 		assertThat(result.isPresent()).isTrue();
 		assertThat(result.get().getOrdem()).isEqualTo(1);
@@ -117,7 +117,7 @@ public class TarefaRepositoryTest {
 	@Test
 	@DisplayName("Nao deve retornar uma tarefa, quando a ordem nao existe")
 	public void findByOrdemCase2() {
-		Optional<Tarefa> result = tarefaRepository.findByOrdem(1);
+		Optional<Tarefa> result = tarefaRepository.findByOrdem(1, 1l);
 		
 		assertThat(result.isEmpty()).isTrue();
 	}

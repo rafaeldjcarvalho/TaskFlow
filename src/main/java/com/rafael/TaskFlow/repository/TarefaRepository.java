@@ -18,6 +18,6 @@ public interface TarefaRepository extends JpaRepository<Tarefa, Long> {
 	
 	//buscar tarefa por ordem
 	//buscar a quantidade de tarefas(total de tarefas - 1)
-	@Query("SELECT t FROM Tarefa t WHERE t.ordem = :ordem")
-	Optional<Tarefa> findByOrdem(@Param("ordem") int ordem);
+	@Query("SELECT t FROM Tarefa t JOIN t.coluna c WHERE t.ordem = :ordem AND c.id =:coluna_id")
+	Optional<Tarefa> findByOrdem(@Param("ordem") int ordem, @Param("coluna_id") Long coluna_id);
 }

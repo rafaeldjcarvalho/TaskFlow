@@ -202,7 +202,7 @@ public class TarefaServiceTest {
 		
 		when(tarefaRepository.findById(1l)).thenReturn(Optional.of(tarefa));
 		when(colunaRepository.findById(2l)).thenReturn(Optional.of(coluna2));
-		when(tarefaRepository.findByOrdem(mover.idNovaOrdem())).thenReturn(Optional.empty());
+		when(tarefaRepository.findByOrdem(mover.idNovaOrdem(), coluna2.getId())).thenReturn(Optional.empty());
 		when(tarefaRepository.save(any(Tarefa.class))).thenReturn(new Tarefa(1l, "titulo", "desc", Prioridade.ALTA, 1, coluna2));
 		
 		this.tarefaService.moveTask(1l, mover, 1l);

@@ -1,5 +1,6 @@
 package com.rafael.TaskFlow.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,10 +61,21 @@ public class TarefaService {
 		if(!verifyOwnershipOfTheTask(tarefa.getColuna(), user_id)) throw new RuntimeException("The Task doesn't belong to the user");
 		if(!verifyOwnershipOfTheTask(novaColuna, user_id)) throw new RuntimeException("The Task doesn't belong to the user");
 		
-		Optional<Tarefa> tarefaNaPosicao = tarefaRepository.findByOrdem(data.idNovaOrdem());
-		if(tarefaNaPosicao.isPresent()) {
-			tarefaNaPosicao.get().setOrdem(tarefa.getOrdem());
-			this.saveTask(tarefaNaPosicao.get());
+		//Mesma coluna
+		Optional<Tarefa> tarefaNaPosicao = tarefaRepository.findByOrdem(data.idNovaOrdem(), novaColuna.getId());
+		if(novaColuna.getId() == tarefa.getColuna().getId()) {
+			if(tarefaNaPosicao.isPresent() && !tarefaNaPosicao.get().equals(tarefa)) {
+				tarefaNaPosicao.get().setOrdem(tarefa.getOrdem());
+				this.saveTask(tarefaNaPosicao.get());
+			}
+		} else { //Coluna diferente
+			if(tarefaNaPosicao.isPresent()) {
+				List<Tarefa> lista = tarefaRepository.findTarefasByColuna(novaColuna.getId());
+				for(int i = data.idNovaOrdem(); i < lista.size(); i++) {
+					lista.get(i).setOrdem(i+1);
+					this.saveTask(lista.get(i));
+				}
+			}
 		}
 		
 		tarefa.setOrdem(data.idNovaOrdem());
